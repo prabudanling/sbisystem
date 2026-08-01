@@ -1,0 +1,812 @@
+     1→<!DOCTYPE html>
+     2→<html lang="id" class="scroll-smooth">
+     3→<head>
+     4→    <meta charset="UTF-8">
+     5→    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     6→    <title>Solusi Baitullah Indonesia — Perjalanan Ibadah Premium</title>
+     7→    <script src="https://cdn.tailwindcss.com"></script>
+     8→    <link rel="preconnect" href="https://fonts.googleapis.com">
+     9→    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    10→    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    11→    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    12→    <script>
+    13→        tailwind.config = {
+    14→            theme: {
+    15→                extend: {
+    16→                    fontFamily: {
+    17→                        cinzel: ['"Cinzel Decorative"', 'serif'],
+    18→                        playfair: ['"Playfair Display"', 'serif'],
+    19→                        poppins: ['Poppins', 'sans-serif'],
+    20→                    },
+    21→                    colors: {
+    22→                        islamic: { green: '#064E3B', dark: '#021a12', deeper: '#010f0a' },
+    23→                        gold: { DEFAULT: '#D4AF37', bright: '#FFD700', soft: '#C5A028' }
+    24→                    }
+    25→                }
+    26→            }
+    27→        }
+    28→    </script>
+    29→    <style>
+    30→        * { margin: 0; padding: 0; box-sizing: border-box; }
+    31→        html { scroll-behavior: smooth; }
+    32→        body {
+    33→            font-family: 'Poppins', sans-serif;
+    34→            background: linear-gradient(170deg, #010f0a 0%, #021a12 30%, #064E3B 100%);
+    35→            color: #FFFFFF; overflow-x: hidden; min-height: 100vh;
+    36→        }
+    37→        #particle-canvas {
+    38→            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    39→            z-index: 0; pointer-events: none;
+    40→        }
+    41→        .glass-card {
+    42→            background: rgba(6,78,59,0.25); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    43→            border: 1px solid rgba(212,175,55,0.2); border-radius: 16px; transition: all 0.3s ease;
+    44→        }
+    45→        .glass-card:hover {
+    46→            box-shadow: 0 0 30px rgba(212,175,55,0.4), 0 0 60px rgba(212,175,55,0.15);
+    47→            border-color: rgba(255,215,0,0.6); transform: scale(1.05);
+    48→        }
+    49→        .gold-glow { box-shadow: 0 0 15px rgba(255,215,0,0.3), 0 0 30px rgba(212,175,55,0.15); }
+    50→        .gold-text-glow { text-shadow: 0 0 20px rgba(255,215,0,0.5), 0 0 40px rgba(212,175,55,0.25); }
+    51→        @keyframes ctaPulse {
+    52→            0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.4), 0 0 40px rgba(212,175,55,0.2), 0 8px 32px rgba(0,0,0,0.3); }
+    53→            50% { box-shadow: 0 0 35px rgba(255,215,0,0.7), 0 0 70px rgba(212,175,55,0.4), 0 8px 32px rgba(0,0,0,0.3); }
+    54→        }
+    55→        .cta-pulse { animation: ctaPulse 3s ease-in-out infinite; }
+    56→        .fade-up {
+    57→            opacity: 0; transform: translateY(40px);
+    58→            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    59→        }
+    60→        .fade-up.visible { opacity: 1; transform: translateY(0); }
+    61→        .fade-up-child {
+    62→            opacity: 0; transform: translateY(30px);
+    63→            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    64→        }
+    65→        .fade-up-child.visible { opacity: 1; transform: translateY(0); }
+    66→        .hero-bg {
+    67→            position: relative;
+    68→            background-image: url('https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=1920&q=80');
+    69→            background-size: cover; background-position: center; background-attachment: fixed;
+    70→        }
+    71→        .hero-bg::before {
+    72→            content: ''; position: absolute; inset: 0;
+    73→            background: linear-gradient(180deg, rgba(1,15,10,0.85) 0%, rgba(2,26,18,0.75) 50%, rgba(6,78,59,0.65) 100%);
+    74→            z-index: 1;
+    75→        }
+    76→        .hero-bg::after {
+    77→            content: ''; position: absolute; inset: 0;
+    78→            background: radial-gradient(ellipse at 50% 30%, rgba(212,175,55,0.08) 0%, transparent 60%);
+    79→            z-index: 2;
+    80→        }
+    81→        .madinah-bg {
+    82→            position: relative;
+    83→            background-image: url('https://images.unsplash.com/photo-1585036156171-384164a8c696?w=1920&q=80');
+    84→            background-size: cover; background-position: center; background-attachment: fixed;
+    85→        }
+    86→        .madinah-bg::before {
+    87→            content: ''; position: absolute; inset: 0;
+    88→            background: linear-gradient(180deg, rgba(6,78,59,0.92) 0%, rgba(2,26,18,0.94) 50%, rgba(1,15,10,0.96) 100%);
+    89→            z-index: 1;
+    90→        }
+    91→        .countdown-box {
+    92→            background: rgba(6,78,59,0.3); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    93→            border: 1px solid rgba(212,175,55,0.25); border-radius: 12px;
+    94→        }
+    95→        .countdown-digit {
+    96→            background: rgba(1,15,10,0.6); border: 1px solid rgba(212,175,55,0.3);
+    97→            border-radius: 10px; min-width: 72px; padding: 12px 16px; text-align: center;
+    98→        }
+    99→        .level-connector {
+   100→            display: flex; align-items: center; justify-content: center;
+   101→            color: #D4AF37; font-size: 1.5rem; position: relative; min-width: 40px;
+   102→        }
+   103→        .level-connector .conn-h {
+   104→            width: 40px; height: 2px; position: absolute;
+   105→            background: linear-gradient(90deg, rgba(212,175,55,0.2), #D4AF37, rgba(212,175,55,0.2));
+   106→        }
+   107→        .level-connector .conn-v {
+   108→            width: 2px; height: 30px; position: absolute; display: none;
+   109→            background: linear-gradient(180deg, rgba(212,175,55,0.2), #D4AF37, rgba(212,175,55,0.2));
+   110→        }
+   111→        @media (max-width: 1023px) {
+   112→            .level-connector { transform: rotate(90deg); }
+   113→            .level-connector .conn-h { display: none; }
+   114→            .level-connector .conn-v { display: block; }
+   115→        }
+   116→        .phone-mockup {
+   117→            position: relative; width: 280px; height: 560px;
+   118→            background: linear-gradient(145deg, #1a1a2e, #16213e);
+   119→            border-radius: 36px; border: 3px solid rgba(212,175,55,0.4);
+   120→            box-shadow: 0 0 40px rgba(212,175,55,0.15), 0 25px 60px rgba(0,0,0,0.5);
+   121→            padding: 12px; margin: 0 auto;
+   122→        }
+   123→        .phone-notch {
+   124→            width: 120px; height: 28px; background: #0a0a0a;
+   125→            border-radius: 0 0 16px 16px; margin: 0 auto 12px; position: relative;
+   126→        }
+   127→        .phone-notch::before {
+   128→            content: ''; position: absolute; width: 8px; height: 8px;
+   129→            background: #1a1a3e; border-radius: 50%; top: 8px; right: 20px;
+   130→        }
+   131→        .phone-screen {
+   132→            background: linear-gradient(180deg, #0d1117, #161b22);
+   133→            border-radius: 24px; height: calc(100% - 40px); padding: 16px;
+   134→            overflow: hidden; display: flex; flex-direction: column; justify-content: center;
+   135→        }
+   136→        .phone-notification {
+   137→            background: linear-gradient(135deg, #1a2332, #0d1117);
+   138→            border: 1px solid rgba(212,175,55,0.2); border-radius: 16px; padding: 20px;
+   139→        }
+   140→        .partner-badge {
+   141→            background: rgba(6,78,59,0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+   142→            border: 1px solid rgba(212,175,55,0.15); border-radius: 14px;
+   143→            padding: 24px 20px; text-align: center; transition: all 0.3s ease; cursor: pointer;
+   144→        }
+   145→        .partner-badge:hover {
+   146→            box-shadow: 0 0 25px rgba(212,175,55,0.35), 0 0 50px rgba(212,175,55,0.12);
+   147→            border-color: rgba(255,215,0,0.5); transform: scale(1.05);
+   148→        }
+   149→        .star-rating .fa-star { color: #FFD700; font-size: 0.85rem; margin-right: 2px; }
+   150→        .promo-badge {
+   151→            background: linear-gradient(135deg, #064E3B, #0a8a5e); border: 2px solid #D4AF37;
+   152→            border-radius: 16px; padding: 16px 28px; display: inline-flex; align-items: center; gap: 12px;
+   153→            box-shadow: 0 0 25px rgba(212,175,55,0.3), 0 0 50px rgba(6,78,59,0.3); transition: all 0.3s ease;
+   154→        }
+   155→        .promo-badge:hover {
+   156→            box-shadow: 0 0 35px rgba(255,215,0,0.5), 0 0 70px rgba(6,78,59,0.4); transform: scale(1.05);
+   157→        }
+   158→        .bokeh {
+   159→            position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.12; pointer-events: none;
+   160→        }
+   161→        .bokeh-1 { width: 400px; height: 400px; background: #D4AF37; top: 10%; left: -5%; }
+   162→        .bokeh-2 { width: 300px; height: 300px; background: #064E3B; top: 60%; right: -5%; }
+   163→        .bokeh-3 { width: 250px; height: 250px; background: #FFD700; bottom: 10%; left: 30%; opacity: 0.08; }
+   164→        .section-divider {
+   165→            height: 1px; max-width: 600px; margin: 0 auto;
+   166→            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent);
+   167→        }
+   168→        .ornament-line {
+   169→            display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;
+   170→        }
+   171→        .ornament-line::before, .ornament-line::after { content: ''; width: 60px; height: 1px; }
+   172→        .ornament-line::before { background: linear-gradient(90deg, transparent, #D4AF37); }
+   173→        .ornament-line::after { background: linear-gradient(90deg, #D4AF37, transparent); }
+   174→        .level-badge {
+   175→            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(255,215,0,0.05));
+   176→            border: 1px solid rgba(212,175,55,0.3); border-radius: 8px;
+   177→            padding: 6px 14px; font-size: 0.75rem; display: inline-block; margin-top: 8px;
+   178→        }
+   179→        .feature-icon-box {
+   180→            width: 52px; height: 52px; border-radius: 12px;
+   181→            display: flex; align-items: center; justify-content: center;
+   182→            font-size: 1.25rem; flex-shrink: 0;
+   183→        }
+   184→        .page-wrapper { display: flex; flex-direction: column; min-height: 100vh; }
+   185→        .main-content { flex: 1; }
+   186→        .bank-box {
+   187→            background: rgba(1,15,10,0.5); border: 1px dashed rgba(212,175,55,0.35);
+   188→            border-radius: 12px; padding: 16px 20px;
+   189→        }
+   190→        @media (max-width: 768px) {
+   191→            .phone-mockup { width: 240px; height: 480px; }
+   192→            .countdown-digit { min-width: 58px; padding: 10px 12px; }
+   193→        }
+   194→        @media (max-width: 480px) {
+   195→            .phone-mockup { width: 220px; height: 440px; }
+   196→        }
+   197→        ::-webkit-scrollbar { width: 8px; }
+   198→        ::-webkit-scrollbar-track { background: #021a12; }
+   199→        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #D4AF37, #064E3B); border-radius: 4px; }
+   200→        @keyframes shimmer {
+   201→            0% { background-position: -200% center; }
+   202→            100% { background-position: 200% center; }
+   203→        }
+   204→        .shimmer-gold {
+   205→            background: linear-gradient(90deg, #D4AF37, #FFD700, #FFF8DC, #FFD700, #D4AF37);
+   206→            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+   207→            background-clip: text; animation: shimmer 4s linear infinite;
+   208→        }
+   209→        @keyframes float {
+   210→            0%, 100% { transform: translateY(0); }
+   211→            50% { transform: translateY(-8px); }
+   212→        }
+   213→        .float-anim { animation: float 4s ease-in-out infinite; }
+   214→        .social-icon {
+   215→            width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+   216→            border: 1px solid rgba(212,175,55,0.3); background: rgba(6,78,59,0.2);
+   217→            color: #D4AF37; transition: all 0.3s ease; font-size: 1rem;
+   218→        }
+   219→        .social-icon:hover {
+   220→            background: #D4AF37; color: #021a12;
+   221→            box-shadow: 0 0 20px rgba(212,175,55,0.4); transform: scale(1.1);
+   222→        }
+   223→    </style>
+   224→</head>
+   225→<body>
+   226→    <canvas id="particle-canvas"></canvas>
+   227→    <div class="page-wrapper">
+   228→        <main class="main-content">
+   229→
+   230→            <!-- ========== A. HERO SECTION ========== -->
+   231→            <section class="hero-bg relative min-h-screen flex items-center justify-center px-4 py-20">
+   232→                <div class="relative z-10 text-center max-w-4xl mx-auto">
+   233→                    <div class="ornament-line mb-6">
+   234→                        <i class="fas fa-star-and-crescent text-gold text-sm"></i>
+   235→                    </div>
+   236→                    <p class="font-playfair text-gold/80 text-sm md:text-base tracking-widest uppercase mb-4 fade-up">
+   237→                        Solusi Baitullah Indonesia
+   238→                    </p>
+   239→                    <h1 class="font-cinzel text-gold-bright text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 gold-text-glow fade-up" style="transition-delay:0.1s">
+   240→                        LIMA PASTI MENUJU<br>TANAH SUCI
+   241→                    </h1>
+   242→                    <p class="font-playfair text-white/70 text-base md:text-lg lg:text-xl max-w-2xl mx-auto mb-10 leading-relaxed fade-up" style="transition-delay:0.2s">
+   243→                        Perjalanan Ibadah Premium Menuju Rumah Allah<br class="hidden sm:block">
+   244→                        <span class="text-gold/60">— Pengalaman Spiritual Tak Terlupakan —</span>
+   245→                    </p>
+   246→                    <div class="fade-up" style="transition-delay:0.3s">
+   247→                        <a href="#program" class="cta-pulse inline-block bg-gradient-to-r from-gold-bright to-gold text-islamic-dark font-poppins font-bold text-base md:text-lg px-10 py-4 rounded-full hover:brightness-110 transition-all duration-300">
+   248→                            <i class="fas fa-hands-praying mr-2"></i>DAFTAR ANGGOTA BARU
+   249→                        </a>
+   250→                    </div>
+   251→                    <div class="mt-10 fade-up" style="transition-delay:0.4s">
+   252→                        <p class="text-white/50 text-xs md:text-sm uppercase tracking-widest mb-3">Penawaran Berakhir Dalam:</p>
+   253→                        <div class="countdown-box inline-flex items-center gap-3 md:gap-4 px-6 py-3">
+   254→                            <div class="countdown-digit">
+   255→                                <span id="cd-hours" class="font-cinzel text-gold-bright text-2xl md:text-3xl font-bold">00</span>
+   256→                                <p class="text-white/40 text-[10px] uppercase tracking-wider mt-1">Jam</p>
+   257→                            </div>
+   258→                            <span class="text-gold text-2xl font-bold">:</span>
+   259→                            <div class="countdown-digit">
+   260→                                <span id="cd-minutes" class="font-cinzel text-gold-bright text-2xl md:text-3xl font-bold">00</span>
+   261→                                <p class="text-white/40 text-[10px] uppercase tracking-wider mt-1">Menit</p>
+   262→                            </div>
+   263→                            <span class="text-gold text-2xl font-bold">:</span>
+   264→                            <div class="countdown-digit">
+   265→                                <span id="cd-seconds" class="font-cinzel text-gold-bright text-2xl md:text-3xl font-bold">00</span>
+   266→                                <p class="text-white/40 text-[10px] uppercase tracking-wider mt-1">Detik</p>
+   267→                            </div>
+   268→                        </div>
+   269→                    </div>
+   270→                </div>
+   271→                <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 float-anim">
+   272→                    <i class="fas fa-chevron-down text-gold/40 text-xl"></i>
+   273→                </div>
+   274→                <div class="bokeh bokeh-1"></div>
+   275→                <div class="bokeh bokeh-2"></div>
+   276→            </section>
+   277→
+   278→            <!-- ========== B. PARTNER GRID SECTION ========== -->
+   279→            <section class="relative py-20 md:py-28 px-4">
+   280→                <div class="max-w-5xl mx-auto">
+   281→                    <div class="text-center mb-14 fade-up">
+   282→                        <div class="ornament-line mb-4">
+   283→                            <i class="fas fa-handshake text-gold text-sm"></i>
+   284→                        </div>
+   285→                        <h2 class="font-cinzel text-gold-bright text-2xl md:text-3xl lg:text-4xl font-bold gold-text-glow mb-3">
+   286→                            Didukung oleh Mitra Terpercaya
+   287→                        </h2>
+   288→                        <p class="font-playfair text-white/50 text-sm md:text-base">Kerjasama resmi dengan penyelenggara ibadah terbaik</p>
+   289→                    </div>
+   290→                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
+   291→                        <div class="partner-badge fade-up-child" style="transition-delay:0.05s">
+   292→                            <i class="fas fa-building-columns text-gold text-2xl mb-3"></i>
+   293→                            <h3 class="font-poppins font-semibold text-white text-sm">MHU</h3>
+   294→                            <p class="text-white/40 text-[10px] mt-1">Mitra Haji & Umrah</p>
+   295→                        </div>
+   296→                        <div class="partner-badge fade-up-child" style="transition-delay:0.1s">
+   297→                            <i class="fas fa-mosque text-gold text-2xl mb-3"></i>
+   298→                            <h3 class="font-poppins font-semibold text-white text-sm">Ta Nur</h3>
+   299→                            <p class="text-white/40 text-[10px] mt-1">Travel Agency</p>
+   300→                        </div>
+   301→                        <div class="partner-badge fade-up-child" style="transition-delay:0.15s">
+   302→                            <i class="fas fa-hotel text-gold text-2xl mb-3"></i>
+   303→                            <h3 class="font-poppins font-semibold text-white text-sm">Samira</h3>
+   304→                            <p class="text-white/40 text-[10px] mt-1">Hotel Partner</p>
+   305→                        </div>
+   306→                        <div class="partner-badge fade-up-child" style="transition-delay:0.2s">
+   307→                            <i class="fas fa-plane-departure text-gold text-2xl mb-3"></i>
+   308→                            <h3 class="font-poppins font-semibold text-white text-sm">Solusi</h3>
+   309→                            <p class="text-white/40 text-[10px] mt-1">Travel Group</p>
+   310→                        </div>
+   311→                        <div class="partner-badge fade-up-child col-span-2 sm:col-span-1" style="transition-delay:0.25s">
+   312→                            <i class="fas fa-globe text-gold text-2xl mb-3"></i>
+   313→                            <h3 class="font-poppins font-semibold text-white text-sm">Arminareka</h3>
+   314→                            <p class="text-white/40 text-[10px] mt-1">Global Travel</p>
+   315→                        </div>
+   316→                    </div>
+   317→                </div>
+   318→            </section>
+   319→
+   320→            <div class="section-divider"></div>
+   321→
+   322→            <!-- ========== C. PROGRAM MEMBER SECTION ========== -->
+   323→            <section id="program" class="relative py-20 md:py-28 px-4">
+   324→                <div class="bokeh bokeh-3"></div>
+   325→                <div class="max-w-3xl mx-auto">
+   326→                    <div class="text-center mb-14 fade-up">
+   327→                        <div class="ornament-line mb-4">
+   328→                            <i class="fas fa-gift text-gold text-sm"></i>
+   329→                        </div>
+   330→                        <h2 class="font-cinzel text-gold-bright text-2xl md:text-3xl lg:text-4xl font-bold gold-text-glow mb-3">
+   331→                            Program Member Eksklusif
+   332→                        </h2>
+   333→                        <p class="font-playfair text-white/50 text-sm md:text-base">Bergabunglah dan nikmati keistimewaan luar biasa</p>
+   334→                    </div>
+   335→                    <div class="glass-card p-8 md:p-12 text-center fade-up" style="transition-delay:0.15s">
+   336→                        <h3 class="font-cinzel text-gold-bright text-xl md:text-2xl font-bold mb-4">DAFTAR SEKARANG</h3>
+   337→                        <div class="mb-6">
+   338→                            <p class="text-white/60 text-sm mb-1">Biaya Pendaftaran</p>
+   339→                            <p class="shimmer-gold font-cinzel text-4xl md:text-5xl font-bold">Hanya Rp 100.000</p>
+   340→                        </div>
+   341→                        <div class="bank-box mb-8 inline-block text-left">
+   342→                            <p class="text-white/50 text-xs uppercase tracking-wider mb-2"><i class="fas fa-university text-gold mr-2"></i>Transfer ke:</p>
+   343→                            <p class="text-white font-semibold text-base">BCA <span class="text-gold-bright">6801650438</span></p>
+   344→                            <p class="text-white/60 text-sm">a.n <span class="text-white/90">PT SBI</span></p>
+   345→                        </div>
+   346→                        <div class="mb-6">
+   347→                            <div class="promo-badge">
+   348→                                <i class="fas fa-circle-check text-gold-bright text-2xl"></i>
+   349→                                <div class="text-left">
+   350→                                    <p class="text-white/60 text-[10px] uppercase tracking-wider">Langsung Dapat</p>
+   351→                                    <p class="font-poppins font-bold text-gold-bright text-lg md:text-xl">SALDO Rp 500.000</p>
+   352→                                    <p class="text-white/50 text-xs">Untuk pembayaran paket umrah</p>
+   353→                                </div>
+   354→                            </div>
+   355→                        </div>
+   356→                        <p class="text-white/30 text-[10px] md:text-xs">*Saldo dapat digunakan untuk pembayaran paket umrah</p>
+   357→                    </div>
+   358→                </div>
+   359→            </section>
+   360→
+   361→            <div class="section-divider"></div>
+   362→
+   363→            <!-- ========== D. LEVELING SYSTEM SECTION ========== -->
+   364→            <section class="madinah-bg relative py-20 md:py-28 px-4">
+   365→                <div class="relative z-10 max-w-6xl mx-auto">
+   366→                    <div class="text-center mb-14 fade-up">
+   367→                        <div class="ornament-line mb-4">
+   368→                            <i class="fas fa-chart-line text-gold text-sm"></i>
+   369→                        </div>
+   370→                        <h2 class="font-cinzel text-gold-bright text-2xl md:text-3xl lg:text-4xl font-bold gold-text-glow mb-3">
+   371→                            Sistem Leveling
+   372→                        </h2>
+   373→                        <p class="font-playfair text-white/50 text-sm md:text-base">Raih Penghasilan Tanpa Batas</p>
+   374→                    </div>
+   375→                    <!-- Desktop: horizontal flow -->
+   376→                    <div class="hidden lg:flex items-center justify-center gap-0 flex-wrap">
+   377→                        <!-- Level 1 -->
+   378→                        <div class="glass-card p-6 w-52 text-center fade-up-child" style="transition-delay:0.05s">
+   379→                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+   380→                                <i class="fas fa-user-plus text-gold-bright text-xl"></i>
+   381→                            </div>
+   382→                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 1</h4>
+   383→                            <p class="font-poppins text-white text-xs font-semibold mb-1">Anggota</p>
+   384→                            <p class="text-white/50 text-[11px]">Daftar Rp 100.000</p>
+   385→                        </div>
+   386→                        <div class="level-connector"><span class="conn-h"></span><i class="fas fa-chevron-right text-gold"></i></div>
+   387→                        <!-- Level 2 -->
+   388→                        <div class="glass-card p-6 w-52 text-center fade-up-child" style="transition-delay:0.1s">
+   389→                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+   390→                                <i class="fas fa-users text-gold-bright text-xl"></i>
+   391→                            </div>
+   392→                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 2</h4>
+   393→                            <p class="font-poppins text-white text-xs font-semibold mb-1">Koordinator</p>
+   394→                            <p class="text-white/50 text-[11px]">Ajak 10 Orang</p>
+   395→                            <div class="level-badge text-gold">Komisi Rp 20.000/Anggota</div>
+   396→                        </div>
+   397→                        <div class="level-connector"><span class="conn-h"></span><i class="fas fa-chevron-right text-gold"></i></div>
+   398→                        <!-- Level 3 -->
+   399→                        <div class="glass-card p-6 w-52 text-center fade-up-child" style="transition-delay:0.15s">
+   400→                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+   401→                                <i class="fas fa-crown text-gold-bright text-xl"></i>
+   402→                            </div>
+   403→                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 3</h4>
+   404→                            <p class="font-poppins text-white text-xs font-semibold mb-1">Leader</p>
+   405→                            <p class="text-white/50 text-[11px]">Ajak 10 Koordinator</p>
+   406→                            <div class="level-badge text-gold">Komisi Rp 10.000/Sub-Anggota</div>
+   407→                        </div>
+   408→                        <div class="level-connector"><span class="conn-h"></span><i class="fas fa-chevron-right text-gold"></i></div>
+   409→                        <!-- Level 4 -->
+   410→                        <div class="glass-card p-6 w-52 text-center fade-up-child border-gold/40!" style="transition-delay:0.2s; border-color: rgba(255,215,0,0.4)">
+   411→                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/30 to-gold/10 border-2 border-gold-bright/50 flex items-center justify-center mx-auto mb-4">
+   412→                                <i class="fas fa-gem text-gold-bright text-xl"></i>
+   413→                            </div>
+   414→                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 4</h4>
+   415→                            <p class="font-poppins text-white text-xs font-semibold mb-1">Master</p>
+   416→                            <p class="text-white/50 text-[11px]">Ajak 10 Leader</p>
+   417→                            <div class="level-badge text-gold-bright font-bold" style="background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(212,175,55,0.1)); border-color: rgba(255,215,0,0.5);">Bonus Umrah GRATIS!</div>
+   418→                        </div>
+   419→                    </div>
+   420→                    <!-- Mobile: vertical flow -->
+   421→                    <div class="lg:hidden flex flex-col items-center gap-2">
+   422→                        <!-- Level 1 Mobile -->
+   423→                        <div class="glass-card p-6 w-full max-w-xs text-center fade-up-child" style="transition-delay:0.05s">
+   424→                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+   425→                                <i class="fas fa-user-plus text-gold-bright text-xl"></i>
+   426→                            </div>
+   427→                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 1</h4>
+   428→                            <p class="font-poppins text-white text-xs font-semibold mb-1">Anggota</p>
+   429→                            <p class="text-white/50 text-[11px]">Daftar Rp 100.000</p>
+   430→                        </div>
+   431→                        <div class="level-connector"><span class="conn-v"></span><i class="fas fa-chevron-down text-gold"></i></div>
+   432→                        <!-- Level 2 Mobile -->
+   433→                        <div class="glass-card p-6 w-full max-w-xs text-center fade-up-child" style="transition-delay:0.1s">
+   434→                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+   435→                                <i class="fas fa-users text-gold-bright text-xl"></i>
+   436→                            </div>
+   437→                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 2</h4>
+   438→                            <p class="font-poppins text-white text-xs font-semibold mb-1">Koordinator</p>
+   439→                            <p class="text-white/50 text-[11px]">Ajak 10 Orang</p>
+   440→                            <div class="level-badge text-gold">Komisi Rp 20.000/Anggota</div>
+   441→                        </div>
+   442→                        <div class="level-connector"><span class="conn-v"></span><i class="fas fa-chevron-down text-gold"></i></div>
+   443→                        <!-- Level 3 Mobile -->
+   444→                        <div class="glass-card p-6 w-full max-w-xs text-center fade-up-child" style="transition-delay:0.15s">
+   445→                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+   446→                                <i class="fas fa-crown text-gold-bright text-xl"></i>
+   447→                            </div>
+   448→                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 3</h4>
+   449→                            <p class="font-poppins text-white text-xs font-semibold mb-1">Leader</p>
+   450→                            <p class="text-white/50 text-[11px]">Ajak 10 Koordinator</p>
+   451→                            <div class="level-badge text-gold">Komisi Rp 10.000/Sub-Anggota</div>
+   452→                        </div>
+   453→                        <div class="level-connector"><span class="conn-v"></span><i class="fas fa-chevron-down text-gold"></i></div>
+   454→                        <!-- Level 4 Mobile -->
+   455→                        <div class="glass-card p-6 w-full max-w-xs text-center fade-up-child" style="transition-delay:0.2s; border-color: rgba(255,215,0,0.4)">
+   456→                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/30 to-gold/10 border-2 border-gold-bright/50 flex items-center justify-center mx-auto mb-4">
+   457→                                <i class="fas fa-gem text-gold-bright text-xl"></i>
+   458→                            </div>
+   459→                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 4</h4>
+   460→                            <p class="font-poppins text-white text-xs font-semibold mb-1">Master</p>
+   461→                            <p class="text-white/50 text-[11px]">Ajak 10 Leader</p>
+   462→                            <div class="level-badge text-gold-bright font-bold" style="background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(212,175,55,0.1)); border-color: rgba(255,215,0,0.5);">Bonus Umrah GRATIS!</div>
+   463→                        </div>
+   464→                    </div>
+   465→                </div>
+   466→            </section>
+   467→
+   468→            <div class="section-divider"></div>
+   469→
+   470→            <!-- ========== E. COMMISSION SYSTEM SECTION ========== -->
+   471→            <section class="relative py-20 md:py-28 px-4">
+   472→                <div class="max-w-5xl mx-auto">
+   473→                    <div class="text-center mb-14 fade-up">
+   474→                        <div class="ornament-line mb-4">
+   475→                            <i class="fas fa-money-bill-transfer text-gold text-sm"></i>
+   476→                        </div>
+   477→                        <h2 class="font-cinzel text-gold-bright text-2xl md:text-3xl lg:text-4xl font-bold gold-text-glow mb-3">
+   478→                            Sistem Komisi Transparan
+   479→                        </h2>
+   480→                        <p class="font-playfair text-white/50 text-sm md:text-base">Komitmen pembayaran cepat dan aman</p>
+   481→                    </div>
+   482→                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+   483→                        <div class="flex justify-center fade-up" style="transition-delay:0.1s">
+   484→                            <div class="phone-mockup">
+   485→                                <div class="phone-notch"></div>
+   486→                                <div class="phone-screen">
+   487→                                    <div class="phone-notification">
+   488→                                        <div class="flex items-center gap-2 mb-4">
+   489→                                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-islamic-green to-emerald-700 flex items-center justify-center">
+   490→                                                <i class="fas fa-building-columns text-gold text-xs"></i>
+   491→                                            </div>
+   492→                                            <div>
+   493→                                                <p class="text-white/60 text-[10px]">BCA Syariah</p>
+   494→                                                <p class="text-white text-xs font-semibold">Notifikasi</p>
+   495→                                            </div>
+   496→                                        </div>
+   497→                                        <div class="border-t border-white/5 pt-4">
+   498→                                            <p class="text-white/50 text-[10px] uppercase tracking-wider mb-2">Transfer Berhasil</p>
+   499→                                            <p class="font-poppins font-bold text-2xl mb-1" style="color:#4ade80;">Rp 40.000</p>
+   500→                                            <p class="text-white/40 text-[10px] mb-4">ke BCA Syariah &bull; ****1234</p>
+   501→                                            <div class="flex items-center gap-2">
+   502→                                                <div class="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
+   503→                                                    <i class="fas fa-check text-emerald-400 text-[9px]"></i>
+   504→                                                </div>
+   505→                                                <span class="text-emerald-400 text-xs font-semibold">Berhasil</span>
+   506→                                                <span class="text-white/30 text-[10px] ml-auto">Hari ini, 14:32 WIB</span>
+   507→                                            </div>
+   508→                                        </div>
+   509→                                    </div>
+   510→                                </div>
+   511→                            </div>
+   512→                        </div>
+   513→                        <div class="text-center lg:text-left fade-up" style="transition-delay:0.2s">
+   514→                            <h3 class="font-cinzel text-gold-bright text-xl md:text-2xl font-bold mb-3">ASYIIK!</h3>
+   515→                            <p class="font-poppins text-white text-lg md:text-xl font-semibold mb-2">Semua Komisi Ditransfer 1x24 Jam</p>
+   516→                            <p class="shimmer-gold font-poppins text-2xl md:text-3xl font-bold mb-8">TANPA POTONGAN!</p>
+   517→                            <div class="space-y-4">
+   518→                                <div class="flex items-center gap-4 justify-center lg:justify-start">
+   519→                                    <div class="feature-icon-box bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30">
+   520→                                        <i class="fas fa-bolt text-gold-bright"></i>
+   521→                                    </div>
+   522→                                    <div class="text-left">
+   523→                                        <p class="text-white font-semibold text-sm">Transfer Otomatis</p>
+   524→                                        <p class="text-white/40 text-xs">Komisi dikirim langsung ke rekening Anda</p>
+   525→                                    </div>
+   526→                                </div>
+   527→                                <div class="flex items-center gap-4 justify-center lg:justify-start">
+   528→                                    <div class="feature-icon-box bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30">
+   529→                                        <i class="fas fa-shield-halved text-gold-bright"></i>
+   530→                                    </div>
+   531→                                    <div class="text-left">
+   532→                                        <p class="text-white font-semibold text-sm">Aman & Terjamin</p>
+   533→                                        <p class="text-white/40 text-xs">Sistem terproteksi dan transparan 100%</p>
+   534→                                    </div>
+   535→                                </div>
+   536→                                <div class="flex items-center gap-4 justify-center lg:justify-start">
+   537→                                    <div class="feature-icon-box bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30">
+   538→                                        <i class="fas fa-clock text-gold-bright"></i>
+   539→                                    </div>
+   540→                                    <div class="text-left">
+   541→                                        <p class="text-white font-semibold text-sm">1x24 Jam</p>
+   542→                                        <p class="text-white/40 text-xs">Proses pencairan maksimal 24 jam</p>
+   543→                                    </div>
+   544→                                </div>
+   545→                            </div>
+   546→                        </div>
+   547→                    </div>
+   548→                </div>
+   549→            </section>
+   550→            <div class="section-divider"></div>
+   551→
+   552→            <!-- ========== F. TESTIMONIAL SECTION ========== -->
+   553→            <section class="madinah-bg relative py-20 md:py-28 px-4">
+   554→                <div class="relative z-10 max-w-6xl mx-auto">
+   555→                    <div class="text-center mb-14 fade-up">
+   556→                        <div class="ornament-line mb-4">
+   557→                            <i class="fas fa-quote-right text-gold text-sm"></i>
+   558→                        </div>
+   559→                        <h2 class="font-cinzel text-gold-bright text-2xl md:text-3xl lg:text-4xl font-bold gold-text-glow mb-3">
+   560→                            Testimoni Jemaah
+   561→                        </h2>
+   562→                        <p class="font-playfair text-white/50 text-sm md:text-base">Cerita nyata dari para anggota SBI</p>
+   563→                    </div>
+   564→                    <div class="grid md:grid-cols-3 gap-6 md:gap-8">
+   565→                        <!-- Testimonial 1 -->
+   566→                        <div class="glass-card p-7 fade-up-child" style="transition-delay:0.05s">
+   567→                            <i class="fas fa-quote-left text-gold/30 text-2xl mb-4 block"></i>
+   568→                            <p class="text-white/70 text-sm leading-relaxed mb-6">"Bismillah, berkat SBI saya bisa berangkat umrah dengan biaya sangat terjangkau. Komisi dari member juga langsung cair!"</p>
+   569→                            <div class="flex items-center gap-3">
+   570→                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gold/30 to-islamic-green flex items-center justify-center">
+   571→                                    <i class="fas fa-user text-gold text-sm"></i>
+   572→                                </div>
+   573→                                <div>
+   574→                                    <p class="text-white font-semibold text-sm">Ibu Siti Aminah</p>
+   575→                                    <p class="text-white/40 text-xs">Jakarta</p>
+   576→                                </div>
+   577→                            </div>
+   578→                            <div class="star-rating mt-4">
+   579→                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+   580→                            </div>
+   581→                        </div>
+   582→                        <!-- Testimonial 2 -->
+   583→                        <div class="glass-card p-7 fade-up-child" style="transition-delay:0.1s">
+   584→                            <i class="fas fa-quote-left text-gold/30 text-2xl mb-4 block"></i>
+   585→                            <p class="text-white/70 text-sm leading-relaxed mb-6">"Sistem leveling-nya luar biasa. Dari anggota biasa jadi koordinator dalam 2 minggu!"</p>
+   586→                            <div class="flex items-center gap-3">
+   587→                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gold/30 to-islamic-green flex items-center justify-center">
+   588→                                    <i class="fas fa-user text-gold text-sm"></i>
+   589→                                </div>
+   590→                                <div>
+   591→                                    <p class="text-white font-semibold text-sm">Bapak Ahmad Rizki</p>
+   592→                                    <p class="text-white/40 text-xs">Bandung</p>
+   593→                                </div>
+   594→                            </div>
+   595→                            <div class="star-rating mt-4">
+   596→                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+   597→                            </div>
+   598→                        </div>
+   599→                        <!-- Testimonial 3 -->
+   600→                        <div class="glass-card p-7 fade-up-child" style="transition-delay:0.15s">
+   601→                            <i class="fas fa-quote-left text-gold/30 text-2xl mb-4 block"></i>
+   602→                            <p class="text-white/70 text-sm leading-relaxed mb-6">"Pelayanan premium, pembimbing yang profesional. Saya sangat puas dengan SBI."</p>
+   603→                            <div class="flex items-center gap-3">
+   604→                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gold/30 to-islamic-green flex items-center justify-center">
+   605→                                    <i class="fas fa-user text-gold text-sm"></i>
+   606→                                </div>
+   607→                                <div>
+   608→                                    <p class="text-white font-semibold text-sm">Ibu Fatimah Zahra</p>
+   609→                                    <p class="text-white/40 text-xs">Surabaya</p>
+   610→                                </div>
+   611→                            </div>
+   612→                            <div class="star-rating mt-4">
+   613→                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+   614→                            </div>
+   615→                        </div>
+   616→                    </div>
+   617→                </div>
+   618→            </section>
+   619→
+   620→        </main>
+   621→
+   622→        <!-- ========== G. FOOTER ========== -->
+   623→        <footer class="relative bg-islamic-deeper border-t border-gold/10 py-14 px-4 mt-auto">
+   624→            <div class="max-w-5xl mx-auto">
+   625→                <!-- Logo / Brand -->
+   626→                <div class="text-center mb-10">
+   627→                    <p class="font-cinzel text-gold-bright text-lg md:text-xl font-bold mb-1">Solusi Baitullah Indonesia</p>
+   628→                    <p class="text-white/30 text-xs">Perjalanan Ibadah Premium Menuju Rumah Allah</p>
+   629→                </div>
+   630→                <!-- Contact Info -->
+   631→                <div class="flex flex-col sm:flex-row items-center justify-center gap-6 mb-10">
+   632→                    <a href="https://wa.me/6287725591800" class="flex items-center gap-3 text-white/60 hover:text-gold transition-colors text-sm">
+   633→                        <div class="w-9 h-9 rounded-full bg-emerald-500/20 flex items-center justify-center">
+   634→                            <i class="fab fa-whatsapp text-emerald-400"></i>
+   635→                        </div>
+   636→                        <span>087725591800</span>
+   637→                    </a>
+   638→                    <a href="https://wa.me/6287725581800" class="flex items-center gap-3 text-white/60 hover:text-gold transition-colors text-sm">
+   639→                        <div class="w-9 h-9 rounded-full bg-emerald-500/20 flex items-center justify-center">
+   640→                            <i class="fab fa-whatsapp text-emerald-400"></i>
+   641→                        </div>
+   642→                        <span>087725581800</span>
+   643→                    </a>
+   644→                    <a href="#" class="flex items-center gap-3 text-white/60 hover:text-gold transition-colors text-sm">
+   645→                        <div class="w-9 h-9 rounded-full bg-gold/10 flex items-center justify-center">
+   646→                            <i class="fas fa-globe text-gold"></i>
+   647→                        </div>
+   648→                        <span>solusibaitullahindonesia.com</span>
+   649→                    </a>
+   650→                </div>
+   651→                <!-- Social Media Icons -->
+   652→                <div class="flex items-center justify-center gap-4 mb-10">
+   653→                    <a href="#" class="social-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+   654→                    <a href="#" class="social-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+   655→                    <a href="#" class="social-icon" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+   656→                    <a href="#" class="social-icon" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+   657→                </div>
+   658→                <!-- Copyright -->
+   659→                <div class="text-center border-t border-white/5 pt-6">
+   660→                    <p class="text-white/30 text-xs">&copy; 2025 Solusi Baitullah Indonesia. All Rights Reserved.</p>
+   661→                    <p class="text-white/20 text-[10px] mt-2">Hak cipta dilindungi undang-undang. Konten website ini bersifat informatif.</p>
+   662→                </div>
+   663→            </div>
+   664→        </footer>
+   665→    </div>
+   666→
+   667→    <!-- ========== JAVASCRIPT ========== -->
+   668→    <script>
+   669→    (function() {
+   670→        'use strict';
+   671→
+   672→        /* ============================================ */
+   673→        /* 1. PARTICLE / SPARKLE CANVAS BACKGROUND       */
+   674→        /* ============================================ */
+   675→        const canvas = document.getElementById('particle-canvas');
+   676→        const ctx = canvas.getContext('2d');
+   677→        let particles = [];
+   678→        const PARTICLE_COUNT = 75;
+   679→
+   680→        function resizeCanvas() {
+   681→            canvas.width = window.innerWidth;
+   682→            canvas.height = window.innerHeight;
+   683→        }
+   684→        resizeCanvas();
+   685→        window.addEventListener('resize', resizeCanvas);
+   686→
+   687→        function createParticle() {
+   688→            const isStar = Math.random() > 0.5;
+   689→            return {
+   690→                x: Math.random() * canvas.width,
+   691→                y: Math.random() * canvas.height,
+   692→                size: isStar ? (Math.random() * 3 + 1.5) : (Math.random() * 2 + 0.5),
+   693→                speedX: (Math.random() - 0.5) * 0.3,
+   694→                speedY: (Math.random() - 0.5) * 0.3 - 0.15,
+   695→                opacity: Math.random() * 0.6 + 0.2,
+   696→                opacityDir: Math.random() > 0.5 ? 1 : -1,
+   697→                opacitySpeed: Math.random() * 0.008 + 0.002,
+   698→                isStar: isStar,
+   699→                rotation: Math.random() * Math.PI * 2,
+   700→                rotationSpeed: (Math.random() - 0.5) * 0.01
+   701→            };
+   702→        }
+   703→
+   704→        for (let i = 0; i < PARTICLE_COUNT; i++) {
+   705→            particles.push(createParticle());
+   706→        }
+   707→
+   708→        function drawStar(cx, cy, spikes, outerR, innerR) {
+   709→            let rot = Math.PI / 2 * 3;
+   710→            const step = Math.PI / spikes;
+   711→            ctx.beginPath();
+   712→            ctx.moveTo(cx, cy - outerR);
+   713→            for (let i = 0; i < spikes; i++) {
+   714→                ctx.lineTo(cx + Math.cos(rot) * outerR, cy + Math.sin(rot) * outerR);
+   715→                rot += step;
+   716→                ctx.lineTo(cx + Math.cos(rot) * innerR, cy + Math.sin(rot) * innerR);
+   717→                rot += step;
+   718→            }
+   719→            ctx.closePath();
+   720→            ctx.fill();
+   721→        }
+   722→
+   723→        function animateParticles() {
+   724→            ctx.clearRect(0, 0, canvas.width, canvas.height);
+   725→            for (let p of particles) {
+   726→                p.x += p.speedX;
+   727→                p.y += p.speedY;
+   728→                p.opacity += p.opacityDir * p.opacitySpeed;
+   729→                if (p.opacity >= 0.8 || p.opacity <= 0.1) p.opacityDir *= -1;
+   730→                p.rotation += p.rotationSpeed;
+   731→
+   732→                if (p.x < -10) p.x = canvas.width + 10;
+   733→                if (p.x > canvas.width + 10) p.x = -10;
+   734→                if (p.y < -10) p.y = canvas.height + 10;
+   735→                if (p.y > canvas.height + 10) p.y = -10;
+   736→
+   737→                ctx.save();
+   738→                ctx.translate(p.x, p.y);
+   739→                ctx.rotate(p.rotation);
+   740→                ctx.globalAlpha = p.opacity;
+   741→
+   742→                if (p.isStar) {
+   743→                    ctx.fillStyle = '#FFD700';
+   744→                    drawStar(0, 0, 4, p.size, p.size * 0.4);
+   745→                } else {
+   746→                    ctx.beginPath();
+   747→                    ctx.arc(0, 0, Math.max(0.5, p.size), 0, Math.PI * 2);
+   748→                    ctx.fillStyle = '#D4AF37';
+   749→                    ctx.fill();
+   750→                }
+   751→                ctx.restore();
+   752→            }
+   753→            requestAnimationFrame(animateParticles);
+   754→        }
+   755→        animateParticles();
+   756→
+   757→        /* ============================================ */
+   758→        /* 2. SCROLL FADE-UP (INTERSECTION OBSERVER)     */
+   759→        /* ============================================ */
+   760→        const fadeEls = document.querySelectorAll('.fade-up');
+   761→        const fadeChildEls = document.querySelectorAll('.fade-up-child');
+   762→        const observerOpts = { threshold: 0.15, rootMargin: '0px 0px -40px 0px' };
+   763→
+   764→        const fadeObserver = new IntersectionObserver(function(entries) {
+   765→            entries.forEach(function(entry) {
+   766→                if (entry.isIntersecting) {
+   767→                    entry.target.classList.add('visible');
+   768→                    fadeObserver.unobserve(entry.target);
+   769→                }
+   770→            });
+   771→        }, observerOpts);
+   772→
+   773→        fadeEls.forEach(function(el) { fadeObserver.observe(el); });
+   774→        fadeChildEls.forEach(function(el) { fadeObserver.observe(el); });
+   775→
+   776→        /* ============================================ */
+   777→        /* 3. COUNTDOWN TIMER (localStorage persisted)   */
+   778→        /* ============================================ */
+   779→        const COUNTDOWN_KEY = 'sbi_countdown_end';
+   780→        const COUNTDOWN_MS = 72 * 60 * 60 * 1000;
+   781→        let endTime = localStorage.getItem(COUNTDOWN_KEY);
+   782→
+   783→        if (!endTime || parseInt(endTime) < Date.now()) {
+   784→            endTime = Date.now() + COUNTDOWN_MS;
+   785→            localStorage.setItem(COUNTDOWN_KEY, endTime.toString());
+   786→        } else {
+   787→            endTime = parseInt(endTime);
+   788→        }
+   789→
+   790→        const cdH = document.getElementById('cd-hours');
+   791→        const cdM = document.getElementById('cd-minutes');
+   792→        const cdS = document.getElementById('cd-seconds');
+   793→
+   794→        function updateCountdown() {
+   795→            const now = Date.now();
+   796→            let diff = endTime - now;
+   797→            if (diff <= 0) { diff = 0; }
+   798→            const h = Math.floor(diff / 3600000);
+   799→            const m = Math.floor((diff % 3600000) / 60000);
+   800→            const s = Math.floor((diff % 60000) / 1000);
+   801→            cdH.textContent = String(h).padStart(2, '0');
+   802→            cdM.textContent = String(m).padStart(2, '0');
+   803→            cdS.textContent = String(s).padStart(2, '0');
+   804→        }
+   805→        updateCountdown();
+   806→        setInterval(updateCountdown, 1000);
+   807→
+   808→    })();
+   809→    </script>
+   810→</body>
+   811→</html>
+   812→
