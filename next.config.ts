@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
+  async rewrites() {
+    return [
+      {
+        source: "/",
+        destination: "/sbi-landing.html",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

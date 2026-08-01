@@ -105,3 +105,20 @@ Stage Summary:
 - VLM verified: Hero (stats+CTA+countdown), Problem (4 cards), Trust (8 badges) visible
 - DOM verified: ALL 9 sections present and accessible
 - Zero console errors, mobile responsive
+
+---
+Task ID: 4
+Agent: main
+Task: Clean URL (remove /sbi-landing.html from address) & address Z.ai chat widget
+
+Work Log:
+- Removed src/app/page.tsx (redirect file no longer needed)
+- Updated next.config.ts with rewrites: source '/' → destination '/sbi-landing.html'
+- Verified with curl: GET / returns 200 with full HTML content (no redirect, URL stays clean)
+- Confirmed dev server restarted and serves correctly after config change
+- Explained to user: Z.ai chat widget is platform-level, only appears in preview, NOT in production deployment
+
+Stage Summary:
+- URL now clean: solusibaitullah.web.id (no /sbi-landing.html suffix)
+- Used Next.js rewrites in next.config.ts for transparent proxy
+- Z.ai chat widget: only exists in Z.ai preview environment, will NOT appear on user's actual domain
