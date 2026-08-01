@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solusi Baitullah Indonesia — Perjalanan Ibadah Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cinzel: ['"Cinzel Decorative"', 'serif'],
+                        playfair: ['"Playfair Display"', 'serif'],
+                        poppins: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        islamic: { green: '#064E3B', dark: '#021a12', deeper: '#010f0a' },
+                        gold: { DEFAULT: '#D4AF37', bright: '#FFD700', soft: '#C5A028' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(170deg, #010f0a 0%, #021a12 30%, #064E3B 100%);
+            color: #FFFFFF; overflow-x: hidden; min-height: 100vh;
+        }
+        #particle-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
+        }
+        .glass-card {
+            background: rgba(6,78,59,0.25); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(212,175,55,0.2); border-radius: 16px; transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            box-shadow: 0 0 30px rgba(212,175,55,0.4), 0 0 60px rgba(212,175,55,0.15);
+            border-color: rgba(255,215,0,0.6); transform: scale(1.05);
+        }
+        .gold-glow { box-shadow: 0 0 15px rgba(255,215,0,0.3), 0 0 30px rgba(212,175,55,0.15); }
+        .gold-text-glow { text-shadow: 0 0 20px rgba(255,215,0,0.5), 0 0 40px rgba(212,175,55,0.25); }
+        @keyframes ctaPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.4), 0 0 40px rgba(212,175,55,0.2), 0 8px 32px rgba(0,0,0,0.3); }
+            50% { box-shadow: 0 0 35px rgba(255,215,0,0.7), 0 0 70px rgba(212,175,55,0.4), 0 8px 32px rgba(0,0,0,0.3); }
+        }
+        .cta-pulse { animation: ctaPulse 3s ease-in-out infinite; }
+        .fade-up {
+            opacity: 0; transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .fade-up-child {
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-up-child.visible { opacity: 1; transform: translateY(0); }
+        .hero-bg {
+            position: relative;
+            background-image: url('https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=1920&q=80');
+            background-size: cover; background-position: center; background-attachment: fixed;
+        }
+        .hero-bg::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(1,15,10,0.85) 0%, rgba(2,26,18,0.75) 50%, rgba(6,78,59,0.65) 100%);
+            z-index: 1;
+        }
+        .hero-bg::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 30%, rgba(212,175,55,0.08) 0%, transparent 60%);
+            z-index: 2;
+        }
+        .madinah-bg {
+            position: relative;
+            background-image: url('https://images.unsplash.com/photo-1585036156171-384164a8c696?w=1920&q=80');
+            background-size: cover; background-position: center; background-attachment: fixed;
+        }
+        .madinah-bg::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(6,78,59,0.92) 0%, rgba(2,26,18,0.94) 50%, rgba(1,15,10,0.96) 100%);
+            z-index: 1;
+        }
+        .countdown-box {
+            background: rgba(6,78,59,0.3); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212,175,55,0.25); border-radius: 12px;
+        }
+        .countdown-digit {
+            background: rgba(1,15,10,0.6); border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 10px; min-width: 72px; padding: 12px 16px; text-align: center;
+        }
+        .level-connector {
+            display: flex; align-items: center; justify-content: center;
+            color: #D4AF37; font-size: 1.5rem; position: relative; min-width: 40px;
+        }
+        .level-connector .conn-h {
+            width: 40px; height: 2px; position: absolute;
+            background: linear-gradient(90deg, rgba(212,175,55,0.2), #D4AF37, rgba(212,175,55,0.2));
+        }
+        .level-connector .conn-v {
+            width: 2px; height: 30px; position: absolute; display: none;
+            background: linear-gradient(180deg, rgba(212,175,55,0.2), #D4AF37, rgba(212,175,55,0.2));
+        }
+        @media (max-width: 1023px) {
+            .level-connector { transform: rotate(90deg); }
+            .level-connector .conn-h { display: none; }
+            .level-connector .conn-v { display: block; }
+        }
+        .phone-mockup {
+            position: relative; width: 280px; height: 560px;
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border-radius: 36px; border: 3px solid rgba(212,175,55,0.4);
+            box-shadow: 0 0 40px rgba(212,175,55,0.15), 0 25px 60px rgba(0,0,0,0.5);
+            padding: 12px; margin: 0 auto;
+        }
+        .phone-notch {
+            width: 120px; height: 28px; background: #0a0a0a;
+            border-radius: 0 0 16px 16px; margin: 0 auto 12px; position: relative;
+        }
+        .phone-notch::before {
+            content: ''; position: absolute; width: 8px; height: 8px;
+            background: #1a1a3e; border-radius: 50%; top: 8px; right: 20px;
+        }
+        .phone-screen {
+            background: linear-gradient(180deg, #0d1117, #161b22);
+            border-radius: 24px; height: calc(100% - 40px); padding: 16px;
+            overflow: hidden; display: flex; flex-direction: column; justify-content: center;
+        }
+        .phone-notification {
+            background: linear-gradient(135deg, #1a2332, #0d1117);
+            border: 1px solid rgba(212,175,55,0.2); border-radius: 16px; padding: 20px;
+        }
+        .partner-badge {
+            background: rgba(6,78,59,0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212,175,55,0.15); border-radius: 14px;
+            padding: 24px 20px; text-align: center; transition: all 0.3s ease; cursor: pointer;
+        }
+        .partner-badge:hover {
+            box-shadow: 0 0 25px rgba(212,175,55,0.35), 0 0 50px rgba(212,175,55,0.12);
+            border-color: rgba(255,215,0,0.5); transform: scale(1.05);
+        }
+        .star-rating .fa-star { color: #FFD700; font-size: 0.85rem; margin-right: 2px; }
+        .promo-badge {
+            background: linear-gradient(135deg, #064E3B, #0a8a5e); border: 2px solid #D4AF37;
+            border-radius: 16px; padding: 16px 28px; display: inline-flex; align-items: center; gap: 12px;
+            box-shadow: 0 0 25px rgba(212,175,55,0.3), 0 0 50px rgba(6,78,59,0.3); transition: all 0.3s ease;
+        }
+        .promo-badge:hover {
+            box-shadow: 0 0 35px rgba(255,215,0,0.5), 0 0 70px rgba(6,78,59,0.4); transform: scale(1.05);
+        }
+        .bokeh {
+            position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.12; pointer-events: none;
+        }
+        .bokeh-1 { width: 400px; height: 400px; background: #D4AF37; top: 10%; left: -5%; }
+        .bokeh-2 { width: 300px; height: 300px; background: #064E3B; top: 60%; right: -5%; }
+        .bokeh-3 { width: 250px; height: 250px; background: #FFD700; bottom: 10%; left: 30%; opacity: 0.08; }
+        .section-divider {
+            height: 1px; max-width: 600px; margin: 0 auto;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent);
+        }
+        .ornament-line {
+            display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;
+        }
+        .ornament-line::before, .ornament-line::after { content: ''; width: 60px; height: 1px; }
+        .ornament-line::before { background: linear-gradient(90deg, transparent, #D4AF37); }
+        .ornament-line::after { background: linear-gradient(90deg, #D4AF37, transparent); }
+        .level-badge {
+            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(255,215,0,0.05));
+            border: 1px solid rgba(212,175,55,0.3); border-radius: 8px;
+            padding: 6px 14px; font-size: 0.75rem; display: inline-block; margin-top: 8px;
+        }
+        .feature-icon-box {
+            width: 52px; height: 52px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem; flex-shrink: 0;
+        }
+        .page-wrapper { display: flex; flex-direction: column; min-height: 100vh; }
+        .main-content { flex: 1; }
+        .bank-box {
+            background: rgba(1,15,10,0.5); border: 1px dashed rgba(212,175,55,0.35);
+            border-radius: 12px; padding: 16px 20px;
+        }
+        @media (max-width: 768px) {
+            .phone-mockup { width: 240px; height: 480px; }
+            .countdown-digit { min-width: 58px; padding: 10px 12px; }
+        }
+        @media (max-width: 480px) {
+            .phone-mockup { width: 220px; height: 440px; }
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #021a12; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #D4AF37, #064E3B); border-radius: 4px; }
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .shimmer-gold {
+            background: linear-gradient(90deg, #D4AF37, #FFD700, #FFF8DC, #FFD700, #D4AF37);
+            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; animation: shimmer 4s linear infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .float-anim { animation: float 4s ease-in-out infinite; }
+        .social-icon {
+            width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(212,175,55,0.3); background: rgba(6,78,59,0.2);
+            color: #D4AF37; transition: all 0.3s ease; font-size: 1rem;
+        }
+        .social-icon:hover {
+            background: #D4AF37; color: #021a12;
+            box-shadow: 0 0 20px rgba(212,175,55,0.4); transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particle-canvas"></canvas>
+    <div class="page-wrapper">
+        <main class="main-content">
+
+            <!-- ========== A. HERO SECTION ========== -->
+            <section class="hero-bg relative min-h-screen flex items-center justify-center px-4 py-20">
+                <div class="relative z-10 text-center max-w-4xl mx-auto">
+                    <div class="ornament-line mb-6">
+                        <i class="fas fa-star-and-crescent text-gold text-sm"></i>
+                    </div>
+                    <p class="font-playfair text-gold/80 text-sm md:text-base tracking-widest uppercase mb-4 fade-up">
+                        Solusi Baitullah Indonesia
+                    </p>
+                    <h1 class="font-cinzel text-gold-bright text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 gold-text-glow fade-up" style="transition-delay:0.1s">
+                        LIMA PASTI MENUJU<br>TANAH SUCI
+                    </h1>
+                    <p class="font-playfair text-white/70 text-base md:text-lg lg:text-xl max-w-2xl mx-auto mb-10 leading-relaxed fade-up" style="transition-delay:0.2s">
+                        Perjalanan Ibadah Premium Menuju Rumah Allah<br class="hidden sm:block">
+                        <span class="text-gold/60">— Pengalaman Spiritual Tak Terlupakan —</span>
+                    </p>
+                    <div class="fade-up" style="transition-delay:0.3s">
+                        <a href="#program" class="cta-pulse inline-block bg-gradient-to-r from-gold-bright to-gold text-islamic-dark font-poppins font-bold text-base md:text-lg px-10 py-4 rounded-full hover:brightness-110 transition-all duration-300">
+                            <i class="fas fa-hands-praying mr-2"></i>DAFTAR ANGGOTA BARU
+                        </a>
+                    </div>
+                    <div class="mt-10 fade-up" style="transition-delay:0.4s">
+                        <p class="text-white/50 text-xs md:text-sm uppercase tracking-widest mb-3">Penawaran Berakhir Dalam:</p>
+                        <div class="countdown-box inline-flex items-center gap-3 md:gap-4 px-6 py-3">
+                            <div class="countdown-digit">
+                                <span id="cd-hours" class="font-cinzel text-gold-bright text-2xl md:text-3xl font-bold">00</span>
+                                <p class="text-white/40 text-[10px] uppercase tracking-wider mt-1">Jam</p>
+                            </div>
+                            <span class="text-gold text-2xl font-bold">:</span>
+                            <div class="countdown-digit">
+                                <span id="cd-minutes" class="font-cinzel text-gold-bright text-2xl md:text-3xl font-bold">00</span>
+                                <p class="text-white/40 text-[10px] uppercase tracking-wider mt-1">Menit</p>
+                            </div>
+                            <span class="text-gold text-2xl font-bold">:</span>
+                            <div class="countdown-digit">
+                                <span id="cd-seconds" class="font-cinzel text-gold-bright text-2xl md:text-3xl font-bold">00</span>
+                                <p class="text-white/40 text-[10px] uppercase tracking-wider mt-1">Detik</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 float-anim">
+                    <i class="fas fa-chevron-down text-gold/40 text-xl"></i>
+                </div>
+                <div class="bokeh bokeh-1"></div>
+                <div class="bokeh bokeh-2"></div>
+            </section>
+
+            <!-- ========== B. PARTNER GRID SECTION ========== -->
+            <section class="relative py-20 md:py-28 px-4">
+                <div class="max-w-5xl mx-auto">
+                    <div class="text-center mb-14 fade-up">
+                        <div class="ornament-line mb-4">
+                            <i class="fas fa-handshake text-gold text-sm"></i>
+                        </div>
+                        <h2 class="font-cinzel text-gold-bright text-2xl md:text-3xl lg:text-4xl font-bold gold-text-glow mb-3">
+                            Didukung oleh Mitra Terpercaya
+                        </h2>
+                        <p class="font-playfair text-white/50 text-sm md:text-base">Kerjasama resmi dengan penyelenggara ibadah terbaik</p>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
+                        <div class="partner-badge fade-up-child" style="transition-delay:0.05s">
+                            <i class="fas fa-building-columns text-gold text-2xl mb-3"></i>
+                            <h3 class="font-poppins font-semibold text-white text-sm">MHU</h3>
+                            <p class="text-white/40 text-[10px] mt-1">Mitra Haji & Umrah</p>
+                        </div>
+                        <div class="partner-badge fade-up-child" style="transition-delay:0.1s">
+                            <i class="fas fa-mosque text-gold text-2xl mb-3"></i>
+                            <h3 class="font-poppins font-semibold text-white text-sm">Ta Nur</h3>
+                            <p class="text-white/40 text-[10px] mt-1">Travel Agency</p>
+                        </div>
+                        <div class="partner-badge fade-up-child" style="transition-delay:0.15s">
+                            <i class="fas fa-hotel text-gold text-2xl mb-3"></i>
+                            <h3 class="font-poppins font-semibold text-white text-sm">Samira</h3>
+                            <p class="text-white/40 text-[10px] mt-1">Hotel Partner</p>
+                        </div>
+                        <div class="partner-badge fade-up-child" style="transition-delay:0.2s">
+                            <i class="fas fa-plane-departure text-gold text-2xl mb-3"></i>
+                            <h3 class="font-poppins font-semibold text-white text-sm">Solusi</h3>
+                            <p class="text-white/40 text-[10px] mt-1">Travel Group</p>
+                        </div>
+                        <div class="partner-badge fade-up-child col-span-2 sm:col-span-1" style="transition-delay:0.25s">
+                            <i class="fas fa-globe text-gold text-2xl mb-3"></i>
+                            <h3 class="font-poppins font-semibold text-white text-sm">Arminareka</h3>
+                            <p class="text-white/40 text-[10px] mt-1">Global Travel</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="section-divider"></div>
+
+            <!-- ========== C. PROGRAM MEMBER SECTION ========== -->
+            <section id="program" class="relative py-20 md:py-28 px-4">
+                <div class="bokeh bokeh-3"></div>
+                <div class="max-w-3xl mx-auto">
+                    <div class="text-center mb-14 fade-up">
+                        <div class="ornament-line mb-4">
+                            <i class="fas fa-gift text-gold text-sm"></i>
+                        </div>
+                        <h2 class="font-cinzel text-gold-bright text-2xl md:text-3xl lg:text-4xl font-bold gold-text-glow mb-3">
+                            Program Member Eksklusif
+                        </h2>
+                        <p class="font-playfair text-white/50 text-sm md:text-base">Bergabunglah dan nikmati keistimewaan luar biasa</p>
+                    </div>
+                    <div class="glass-card p-8 md:p-12 text-center fade-up" style="transition-delay:0.15s">
+                        <h3 class="font-cinzel text-gold-bright text-xl md:text-2xl font-bold mb-4">DAFTAR SEKARANG</h3>
+                        <div class="mb-6">
+                            <p class="text-white/60 text-sm mb-1">Biaya Pendaftaran</p>
+                            <p class="shimmer-gold font-cinzel text-4xl md:text-5xl font-bold">Hanya Rp 100.000</p>
+                        </div>
+                        <div class="bank-box mb-8 inline-block text-left">
+                            <p class="text-white/50 text-xs uppercase tracking-wider mb-2"><i class="fas fa-university text-gold mr-2"></i>Transfer ke:</p>
+                            <p class="text-white font-semibold text-base">BCA <span class="text-gold-bright">6801650438</span></p>
+                            <p class="text-white/60 text-sm">a.n <span class="text-white/90">PT SBI</span></p>
+                        </div>
+                        <div class="mb-6">
+                            <div class="promo-badge">
+                                <i class="fas fa-circle-check text-gold-bright text-2xl"></i>
+                                <div class="text-left">
+                                    <p class="text-white/60 text-[10px] uppercase tracking-wider">Langsung Dapat</p>
+                                    <p class="font-poppins font-bold text-gold-bright text-lg md:text-xl">SALDO Rp 500.000</p>
+                                    <p class="text-white/50 text-xs">Untuk pembayaran paket umrah</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-white/30 text-[10px] md:text-xs">*Saldo dapat digunakan untuk pembayaran paket umrah</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="section-divider"></div>
+
+            <!-- ========== D. LEVELING SYSTEM SECTION ========== -->
+            <section class="madinah-bg relative py-20 md:py-28 px-4">
+                <div class="relative z-10 max-w-6xl mx-auto">
+                    <div class="text-center mb-14 fade-up">
+                        <div class="ornament-line mb-4">
+                            <i class="fas fa-chart-line text-gold text-sm"></i>
+                        </div>
+                        <h2 class="font-cinzel text-gold-bright text-2xl md:text-3xl lg:text-4xl font-bold gold-text-glow mb-3">
+                            Sistem Leveling
+                        </h2>
+                        <p class="font-playfair text-white/50 text-sm md:text-base">Raih Penghasilan Tanpa Batas</p>
+                    </div>
+                    <!-- Desktop: horizontal flow -->
+                    <div class="hidden lg:flex items-center justify-center gap-0 flex-wrap">
+                        <!-- Level 1 -->
+                        <div class="glass-card p-6 w-52 text-center fade-up-child" style="transition-delay:0.05s">
+                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-user-plus text-gold-bright text-xl"></i>
+                            </div>
+                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 1</h4>
+                            <p class="font-poppins text-white text-xs font-semibold mb-1">Anggota</p>
+                            <p class="text-white/50 text-[11px]">Daftar Rp 100.000</p>
+                        </div>
+                        <div class="level-connector"><span class="conn-h"></span><i class="fas fa-chevron-right text-gold"></i></div>
+                        <!-- Level 2 -->
+                        <div class="glass-card p-6 w-52 text-center fade-up-child" style="transition-delay:0.1s">
+                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-users text-gold-bright text-xl"></i>
+                            </div>
+                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 2</h4>
+                            <p class="font-poppins text-white text-xs font-semibold mb-1">Koordinator</p>
+                            <p class="text-white/50 text-[11px]">Ajak 10 Orang</p>
+                            <div class="level-badge text-gold">Komisi Rp 20.000/Anggota</div>
+                        </div>
+                        <div class="level-connector"><span class="conn-h"></span><i class="fas fa-chevron-right text-gold"></i></div>
+                        <!-- Level 3 -->
+                        <div class="glass-card p-6 w-52 text-center fade-up-child" style="transition-delay:0.15s">
+                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-crown text-gold-bright text-xl"></i>
+                            </div>
+                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 3</h4>
+                            <p class="font-poppins text-white text-xs font-semibold mb-1">Leader</p>
+                            <p class="text-white/50 text-[11px]">Ajak 10 Koordinator</p>
+                            <div class="level-badge text-gold">Komisi Rp 10.000/Sub-Anggota</div>
+                        </div>
+                        <div class="level-connector"><span class="conn-h"></span><i class="fas fa-chevron-right text-gold"></i></div>
+                        <!-- Level 4 -->
+                        <div class="glass-card p-6 w-52 text-center fade-up-child border-gold/40!" style="transition-delay:0.2s; border-color: rgba(255,215,0,0.4)">
+                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/30 to-gold/10 border-2 border-gold-bright/50 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-gem text-gold-bright text-xl"></i>
+                            </div>
+                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 4</h4>
+                            <p class="font-poppins text-white text-xs font-semibold mb-1">Master</p>
+                            <p class="text-white/50 text-[11px]">Ajak 10 Leader</p>
+                            <div class="level-badge text-gold-bright font-bold" style="background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(212,175,55,0.1)); border-color: rgba(255,215,0,0.5);">Bonus Umrah GRATIS!</div>
+                        </div>
+                    </div>
+                    <!-- Mobile: vertical flow -->
+                    <div class="lg:hidden flex flex-col items-center gap-2">
+                        <!-- Level 1 Mobile -->
+                        <div class="glass-card p-6 w-full max-w-xs text-center fade-up-child" style="transition-delay:0.05s">
+                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-user-plus text-gold-bright text-xl"></i>
+                            </div>
+                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 1</h4>
+                            <p class="font-poppins text-white text-xs font-semibold mb-1">Anggota</p>
+                            <p class="text-white/50 text-[11px]">Daftar Rp 100.000</p>
+                        </div>
+                        <div class="level-connector"><span class="conn-v"></span><i class="fas fa-chevron-down text-gold"></i></div>
+                        <!-- Level 2 Mobile -->
+                        <div class="glass-card p-6 w-full max-w-xs text-center fade-up-child" style="transition-delay:0.1s">
+                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-users text-gold-bright text-xl"></i>
+                            </div>
+                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 2</h4>
+                            <p class="font-poppins text-white text-xs font-semibold mb-1">Koordinator</p>
+                            <p class="text-white/50 text-[11px]">Ajak 10 Orang</p>
+                            <div class="level-badge text-gold">Komisi Rp 20.000/Anggota</div>
+                        </div>
+                        <div class="level-connector"><span class="conn-v"></span><i class="fas fa-chevron-down text-gold"></i></div>
+                        <!-- Level 3 Mobile -->
+                        <div class="glass-card p-6 w-full max-w-xs text-center fade-up-child" style="transition-delay:0.15s">
+                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-crown text-gold-bright text-xl"></i>
+                            </div>
+                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 3</h4>
+                            <p class="font-poppins text-white text-xs font-semibold mb-1">Leader</p>
+                            <p class="text-white/50 text-[11px]">Ajak 10 Koordinator</p>
+                            <div class="level-badge text-gold">Komisi Rp 10.000/Sub-Anggota</div>
+                        </div>
+                        <div class="level-connector"><span class="conn-v"></span><i class="fas fa-chevron-down text-gold"></i></div>
+                        <!-- Level 4 Mobile -->
+                        <div class="glass-card p-6 w-full max-w-xs text-center fade-up-child" style="transition-delay:0.2s; border-color: rgba(255,215,0,0.4)">
+                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-gold/30 to-gold/10 border-2 border-gold-bright/50 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-gem text-gold-bright text-xl"></i>
+                            </div>
+                            <h4 class="font-cinzel text-gold-bright text-sm font-bold mb-1">Level 4</h4>
+                            <p class="font-poppins text-white text-xs font-semibold mb-1">Master</p>
+                            <p class="text-white/50 text-[11px]">Ajak 10 Leader</p>
+                            <div class="level-badge text-gold-bright font-bold" style="background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(212,175,55,0.1)); border-color: rgba(255,215,0,0.5);">Bonus Umrah GRATIS!</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="section-divider"></div>
+
+            <!-- ========== E. COMMISSION SYSTEM SECTION ========== -->
+            <section class="relative py-20 md:py-28 px-4">
+                <div class="max-w-5xl mx-auto">
+                    <div class="text-center mb-14 fade-up">
+                        <div class="ornament-line mb-4">
+                            <i class="fas fa-money-bill-transfer text-gold text-sm"></i>
+                        </div>
+                        <h2 class="font-cinzel text-gold-bright text-2xl md:text-3xl lg:text-4xl font-bold gold-text-glow mb-3">
+                            Sistem Komisi Transparan
+                        </h2>
+                        <p class="font-playfair text-white/50 text-sm md:text-base">Komitmen pembayaran cepat dan aman</p>
+                    </div>
+                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+                        <div class="flex justify-center fade-up" style="transition-delay:0.1s">
+                            <div class="phone-mockup">
+                                <div class="phone-notch"></div>
+                                <div class="phone-screen">
+                                    <div class="phone-notification">
+                                        <div class="flex items-center gap-2 mb-4">
+                                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-islamic-green to-emerald-700 flex items-center justify-center">
+                                                <i class="fas fa-building-columns text-gold text-xs"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-white/60 text-[10px]">BCA Syariah</p>
+                                                <p class="text-white text-xs font-semibold">Notifikasi</p>
+                                            </div>
+                                        </div>
+                                        <div class="border-t border-white/5 pt-4">
+                                            <p class="text-white/50 text-[10px] uppercase tracking-wider mb-2">Transfer Berhasil</p>
+                                            <p class="font-poppins font-bold text-2xl mb-1" style="color:#4ade80;">Rp 40.000</p>
+                                            <p class="text-white/40 text-[10px] mb-4">ke BCA Syariah &bull; ****1234</p>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                                                    <i class="fas fa-check text-emerald-400 text-[9px]"></i>
+                                                </div>
+                                                <span class="text-emerald-400 text-xs font-semibold">Berhasil</span>
+                                                <span class="text-white/30 text-[10px] ml-auto">Hari ini, 14:32 WIB</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center lg:text-left fade-up" style="transition-delay:0.2s">
+                            <h3 class="font-cinzel text-gold-bright text-xl md:text-2xl font-bold mb-3">ASYIIK!</h3>
+                            <p class="font-poppins text-white text-lg md:text-xl font-semibold mb-2">Semua Komisi Ditransfer 1x24 Jam</p>
+                            <p class="shimmer-gold font-poppins text-2xl md:text-3xl font-bold mb-8">TANPA POTONGAN!</p>
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-4 justify-center lg:justify-start">
+                                    <div class="feature-icon-box bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30">
+                                        <i class="fas fa-bolt text-gold-bright"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <p class="text-white font-semibold text-sm">Transfer Otomatis</p>
+                                        <p class="text-white/40 text-xs">Komisi dikirim langsung ke rekening Anda</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4 justify-center lg:justify-start">
+                                    <div class="feature-icon-box bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30">
+                                        <i class="fas fa-shield-halved text-gold-bright"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <p class="text-white font-semibold text-sm">Aman & Terjamin</p>
+                                        <p class="text-white/40 text-xs">Sistem terproteksi dan transparan 100%</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4 justify-center lg:justify-start">
+                                    <div class="feature-icon-box bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/30">
+                                        <i class="fas fa-clock text-gold-bright"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <p class="text-white font-semibold text-sm">1x24 Jam</p>
+                                        <p class="text-white/40 text-xs">Proses pencairan maksimal 24 jam</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div class="section-divider"></div>
+
+            <!-- ========== F. TESTIMONIAL SECTION ========== -->
+            <section class="madinah-bg relative py-20 md:py-28 px-4">
+                <div class="relative z-10 max-w-6xl mx-auto">
+                    <div class="text-center mb-14 fade-up">
+                        <div class="ornament-line mb-4">
+                            <i class="fas fa-quote-right text-gold text-sm"></i>
+                        </div>
+                        <h2 class="font-cinzel text-gold-bright text-2xl md:text-3xl lg:text-4xl font-bold gold-text-glow mb-3">
+                            Testimoni Jemaah
+                        </h2>
+                        <p class="font-playfair text-white/50 text-sm md:text-base">Cerita nyata dari para anggota SBI</p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-6 md:gap-8">
+                        <!-- Testimonial 1 -->
+                        <div class="glass-card p-7 fade-up-child" style="transition-delay:0.05s">
+                            <i class="fas fa-quote-left text-gold/30 text-2xl mb-4 block"></i>
+                            <p class="text-white/70 text-sm leading-relaxed mb-6">"Bismillah, berkat SBI saya bisa berangkat umrah dengan biaya sangat terjangkau. Komisi dari member juga langsung cair!"</p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gold/30 to-islamic-green flex items-center justify-center">
+                                    <i class="fas fa-user text-gold text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-white font-semibold text-sm">Ibu Siti Aminah</p>
+                                    <p class="text-white/40 text-xs">Jakarta</p>
+                                </div>
+                            </div>
+                            <div class="star-rating mt-4">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <!-- Testimonial 2 -->
+                        <div class="glass-card p-7 fade-up-child" style="transition-delay:0.1s">
+                            <i class="fas fa-quote-left text-gold/30 text-2xl mb-4 block"></i>
+                            <p class="text-white/70 text-sm leading-relaxed mb-6">"Sistem leveling-nya luar biasa. Dari anggota biasa jadi koordinator dalam 2 minggu!"</p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gold/30 to-islamic-green flex items-center justify-center">
+                                    <i class="fas fa-user text-gold text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-white font-semibold text-sm">Bapak Ahmad Rizki</p>
+                                    <p class="text-white/40 text-xs">Bandung</p>
+                                </div>
+                            </div>
+                            <div class="star-rating mt-4">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <!-- Testimonial 3 -->
+                        <div class="glass-card p-7 fade-up-child" style="transition-delay:0.15s">
+                            <i class="fas fa-quote-left text-gold/30 text-2xl mb-4 block"></i>
+                            <p class="text-white/70 text-sm leading-relaxed mb-6">"Pelayanan premium, pembimbing yang profesional. Saya sangat puas dengan SBI."</p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gold/30 to-islamic-green flex items-center justify-center">
+                                    <i class="fas fa-user text-gold text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-white font-semibold text-sm">Ibu Fatimah Zahra</p>
+                                    <p class="text-white/40 text-xs">Surabaya</p>
+                                </div>
+                            </div>
+                            <div class="star-rating mt-4">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- ========== G. FOOTER ========== -->
+        <footer class="relative bg-islamic-deeper border-t border-gold/10 py-14 px-4 mt-auto">
+            <div class="max-w-5xl mx-auto">
+                <!-- Logo / Brand -->
+                <div class="text-center mb-10">
+                    <p class="font-cinzel text-gold-bright text-lg md:text-xl font-bold mb-1">Solusi Baitullah Indonesia</p>
+                    <p class="text-white/30 text-xs">Perjalanan Ibadah Premium Menuju Rumah Allah</p>
+                </div>
+                <!-- Contact Info -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-6 mb-10">
+                    <a href="https://wa.me/6287725591800" class="flex items-center gap-3 text-white/60 hover:text-gold transition-colors text-sm">
+                        <div class="w-9 h-9 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                            <i class="fab fa-whatsapp text-emerald-400"></i>
+                        </div>
+                        <span>087725591800</span>
+                    </a>
+                    <a href="https://wa.me/6287725581800" class="flex items-center gap-3 text-white/60 hover:text-gold transition-colors text-sm">
+                        <div class="w-9 h-9 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                            <i class="fab fa-whatsapp text-emerald-400"></i>
+                        </div>
+                        <span>087725581800</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 text-white/60 hover:text-gold transition-colors text-sm">
+                        <div class="w-9 h-9 rounded-full bg-gold/10 flex items-center justify-center">
+                            <i class="fas fa-globe text-gold"></i>
+                        </div>
+                        <span>solusibaitullahindonesia.com</span>
+                    </a>
+                </div>
+                <!-- Social Media Icons -->
+                <div class="flex items-center justify-center gap-4 mb-10">
+                    <a href="#" class="social-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" class="social-icon" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                </div>
+                <!-- Copyright -->
+                <div class="text-center border-t border-white/5 pt-6">
+                    <p class="text-white/30 text-xs">&copy; 2025 Solusi Baitullah Indonesia. All Rights Reserved.</p>
+                    <p class="text-white/20 text-[10px] mt-2">Hak cipta dilindungi undang-undang. Konten website ini bersifat informatif.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ========== JAVASCRIPT ========== -->
+    <script>
+    (function() {
+        'use strict';
+
+        /* ============================================ */
+        /* 1. PARTICLE / SPARKLE CANVAS BACKGROUND       */
+        /* ============================================ */
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const PARTICLE_COUNT = 75;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function createParticle() {
+            const isStar = Math.random() > 0.5;
+            return {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: isStar ? (Math.random() * 3 + 1.5) : (Math.random() * 2 + 0.5),
+                speedX: (Math.random() - 0.5) * 0.3,
+                speedY: (Math.random() - 0.5) * 0.3 - 0.15,
+                opacity: Math.random() * 0.6 + 0.2,
+                opacityDir: Math.random() > 0.5 ? 1 : -1,
+                opacitySpeed: Math.random() * 0.008 + 0.002,
+                isStar: isStar,
+                rotation: Math.random() * Math.PI * 2,
+                rotationSpeed: (Math.random() - 0.5) * 0.01
+            };
+        }
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            particles.push(createParticle());
+        }
+
+        function drawStar(cx, cy, spikes, outerR, innerR) {
+            let rot = Math.PI / 2 * 3;
+            const step = Math.PI / spikes;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - outerR);
+            for (let i = 0; i < spikes; i++) {
+                ctx.lineTo(cx + Math.cos(rot) * outerR, cy + Math.sin(rot) * outerR);
+                rot += step;
+                ctx.lineTo(cx + Math.cos(rot) * innerR, cy + Math.sin(rot) * innerR);
+                rot += step;
+            }
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let p of particles) {
+                p.x += p.speedX;
+                p.y += p.speedY;
+                p.opacity += p.opacityDir * p.opacitySpeed;
+                if (p.opacity >= 0.8 || p.opacity <= 0.1) p.opacityDir *= -1;
+                p.rotation += p.rotationSpeed;
+
+                if (p.x < -10) p.x = canvas.width + 10;
+                if (p.x > canvas.width + 10) p.x = -10;
+                if (p.y < -10) p.y = canvas.height + 10;
+                if (p.y > canvas.height + 10) p.y = -10;
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation);
+                ctx.globalAlpha = p.opacity;
+
+                if (p.isStar) {
+                    ctx.fillStyle = '#FFD700';
+                    drawStar(0, 0, 4, p.size, p.size * 0.4);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, Math.max(0.5, p.size), 0, Math.PI * 2);
+                    ctx.fillStyle = '#D4AF37';
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        /* ============================================ */
+        /* 2. SCROLL FADE-UP (INTERSECTION OBSERVER)     */
+        /* ============================================ */
+        const fadeEls = document.querySelectorAll('.fade-up');
+        const fadeChildEls = document.querySelectorAll('.fade-up-child');
+        const observerOpts = { threshold: 0.15, rootMargin: '0px 0px -40px 0px' };
+
+        const fadeObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    fadeObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOpts);
+
+        fadeEls.forEach(function(el) { fadeObserver.observe(el); });
+        fadeChildEls.forEach(function(el) { fadeObserver.observe(el); });
+
+        /* ============================================ */
+        /* 3. COUNTDOWN TIMER (localStorage persisted)   */
+        /* ============================================ */
+        const COUNTDOWN_KEY = 'sbi_countdown_end';
+        const COUNTDOWN_MS = 72 * 60 * 60 * 1000;
+        let endTime = localStorage.getItem(COUNTDOWN_KEY);
+
+        if (!endTime || parseInt(endTime) < Date.now()) {
+            endTime = Date.now() + COUNTDOWN_MS;
+            localStorage.setItem(COUNTDOWN_KEY, endTime.toString());
+        } else {
+            endTime = parseInt(endTime);
+        }
+
+        const cdH = document.getElementById('cd-hours');
+        const cdM = document.getElementById('cd-minutes');
+        const cdS = document.getElementById('cd-seconds');
+
+        function updateCountdown() {
+            const now = Date.now();
+            let diff = endTime - now;
+            if (diff <= 0) { diff = 0; }
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            cdH.textContent = String(h).padStart(2, '0');
+            cdM.textContent = String(m).padStart(2, '0');
+            cdS.textContent = String(s).padStart(2, '0');
+        }
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+    })();
+    </script>
+</body>
+</html>
